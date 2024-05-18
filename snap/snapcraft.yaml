@@ -1,0 +1,75 @@
+name: music-assistant-server
+base: core22 
+version: '2.0.4' 
+summary: Free and opensource Media library manager
+description: |
+  Music Assistant is a free, opensource Media library manager that connects to your 
+  streaming services and a wide range of connected speakers. The server is the beating 
+  heart, the core of Music Assistant and must run on an always-on device like a 
+  Raspberry Pi, a NAS or an Intel NUC or alike.
+grade: devel 
+confinement: devmode 
+
+apps:
+  music-assistant:
+     command: ./bin/mass
+
+package-repositories:
+  - type: apt
+    ppa: spocon/spocon
+  - type: apt
+    ppa: deadsnakes/ppa
+
+parts:
+  #snapcraft-preload:
+  #  source: https://github.com/sergiusens/snapcraft-preload.git
+  #  plugin: cmake
+  #  cmake-parameters:
+  #    - -DCMAKE_INSTALL_PREFIX=/
+  #  build-packages:
+  #    - on amd64:
+  #      - gcc-multilib
+  #      - g++-multilib
+        
+  music-assistant:
+    after: [libraop]
+    plugin: python
+    source: https://github.com/music-assistant/server.git
+    source-tag: ${SNAPCRAFT_PROJECT_VERSION}
+    python-requirements:  [requirements_all.txt]
+    build-environment:
+      - PARTS_PYTHON_INTERPRETER: "python3.12"
+    python-packages:
+      - setuptools #<58
+      - wheel
+      - Cython
+      - pip
+      - build
+    build-packages:
+      - autoconf
+      - build-essential
+      - cmake
+      - cython3
+      - pkg-config
+      - python3.12-dev
+      - python3.12-venv
+    stage-packages:
+      - spocon
+      - python3.12-venv
+    #override-build: |
+    #  set -x
+    #  CWD="$(pwd)"
+    #  cd "${CRAFT_PART_BUILD}" && ${PARTS_PYTHON_INTERPRETER} --all && cd "${CWD}"
+    #  craftctl default
+    
+  libraop:
+    plugin: dump
+    build-packages:
+      - build-essential
+      - libssl-dev
+      - cmake
+    stage-packages:
+      - lib32stdc++6
+      - libc++-dev
+      - libc6-dev
+    source: https://github.com/philippe44/libraop.git
