@@ -20,6 +20,12 @@ package-repositories:
   - type: apt
     ppa: deadsnakes/ppa
 
+layout:
+  /etc/java-11-openjdk/security/blacklisted.certs: 
+    symlink: $SNAP/etc/java-11-openjdk/security/blacklisted.certs
+  /etc/ssl/certs/java/cacerts lint-snap-v2_external_symlinks:
+    symlink: $SNAP/etc/ssl/certs/java/cacerts lint-snap-v2_external_symlinks
+
 parts:
   #snapcraft-preload:
   #  source: https://github.com/sergiusens/snapcraft-preload.git
