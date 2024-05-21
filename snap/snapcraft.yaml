@@ -1,5 +1,5 @@
 name: music-assistant-server
-base: core22 
+base: core24
 version: '2.0.4' 
 summary: Free and opensource Media library manager
 description: |
@@ -16,15 +16,13 @@ apps:
 
 package-repositories:
   - type: apt
-    ppa: spocon/spocon
+    url: https://www.deb-multimedia.org
+    suites: [stable]
+    components: [main, non-free]
+    key-id: A401FF99368FA1F98152DE755C808C2B65558117
   - type: apt
     ppa: deadsnakes/ppa
-
-layout:
-  /etc/java-11-openjdk/security/blacklisted.certs: 
-    symlink: $SNAP/etc/java-11-openjdk/security/blacklisted.certs
-  /etc/ssl/certs/java/cacerts lint-snap-v2_external_symlinks:
-    symlink: $SNAP/etc/ssl/certs/java/cacerts lint-snap-v2_external_symlinks
+    priority: always
 
 parts:
   #snapcraft-preload:
@@ -38,7 +36,7 @@ parts:
   #      - g++-multilib
         
   music-assistant:
-    after: [libraop]
+    #after: [libraop]
     plugin: python
     source: https://github.com/music-assistant/server.git
     source-tag: ${SNAPCRAFT_PROJECT_VERSION}
@@ -59,23 +57,40 @@ parts:
       - pkg-config
       - python3.12-dev
       - python3.12-venv
+      - libsox-fmt-all
+      - libsox3
+      - sox
+      - cifs-utils
+      - libnfs-utils
     stage-packages:
-      - spocon
+      - deb-multimedia-keyring
       - python3.12-venv
-    #override-build: |
-    #  set -x
-    #  CWD="$(pwd)"
-    #  cd "${CRAFT_PART_BUILD}" && ${PARTS_PYTHON_INTERPRETER} --all && cd "${CWD}"
-    #  craftctl default
+      - snapserver
+    stage:
+      - '*'
+      - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-aarch64
+      - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-arm
+
     
-  libraop:
-    plugin: dump
-    build-packages:
-      - build-essential
-      - libssl-dev
-      - cmake
-    stage-packages:
-      - lib32stdc++6
-      - libc++-dev
-      - libc6-dev
-    source: https://github.com/philippe44/libraop.git
+  #libraop:
+  #  plugin: dump
+  #  source: https://github.com/philippe44/libraop.git
+  #  build-packages:
+  #    - build-essential
+  #    - libssl-dev
+  #    - cmake
+        #- gcc-aarch64-linux-gnu 
+        #- binutils-aarch64-linux-gnu
+        #- gcc-arm-linux-gnueabti
+        #- binutils-arm-linux-gnueabi
+        #- gcc-powerpc-linux-gnu
+        #- binutils-powerpc-linux-gnu
+    # override-build: |
+    #  set -ex
+    #  echo "CMAKE"
+    #  cmake -DHOST="linux" -DPLATFORM="${CRAFT_ARCH_TRIPLET_BUILD_FOR}" \
+    #      --install-prefix "${CRAFT_PART_BUILD_WORK}" "${CRAFT_PART_SRC_WORK}" && \
+    #    echo "MAKE" && \
+    #    make -j "${CRAFT_PARALLEL_BUILD_COUNT}" "${CRAFT_PART_BUILD_WORK}"
+    #  echo "FINISH"
+    #  craftctl default
