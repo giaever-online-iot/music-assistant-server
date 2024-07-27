@@ -98,8 +98,8 @@ parts:
       - libpulse0
     stage:
       - '*'
-      - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-aarch64
-      - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-arm
+      # - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-*
+      # - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-arm
     # override-stage: |
     #   craftctl default 
     #   find "${CRAFT_STAGE}/bin" -type f -executable -exec sed -i 's/!\/usr\/bin\/env python3.12/!\/usr\/bin\/env python3/' {} \;
