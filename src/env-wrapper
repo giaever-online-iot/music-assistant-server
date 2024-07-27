@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cd $SNAP
+
+# Add sub directories of lib-path; (e.g pulseaudio)
+readarray -d '' PATHS < <(find "$SNAP/usr/lib/$(uname -m)-linux-gnu" -maxdepth 1 -type d -print0)
+
+if [ "${#PATHS[@]}" -ne 0 ]; then
+    for TPATH in "${PATHS[@]}"; do
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${TPATH}"
+    done
+fi
+
+eval $@
