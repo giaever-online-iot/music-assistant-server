@@ -1,12 +1,21 @@
 name: music-assistant-server
+title: Music Assistant (server)
 base: core24
 version: '2.1.0' 
+license: Apache-2.0
 summary: Free and opensource Media library manager
 description: |
   Music Assistant is a free, opensource Media library manager that connects to your 
   streaming services and a wide range of connected speakers. The server is the beating 
   heart, the core of Music Assistant and must run on an always-on device like a 
-  Raspberry Pi, a NAS or an Intel NUC or alike.
+  Raspberry Pi, a NAS or an Intel NUC or alike. 
+  
+  This project is not related to the official project, nor endorsed by it. 
+website: https://music-assistant.io/
+source-code: https://github.com/giaever-online-iot/music-assistant-server
+issues:
+  - https://github.com/giaever-online-iot/music-assistant-server/issues
+  - https://github.com/music-assistant/hass-music-assistant/issues
 grade: stable
 confinement: strict
 

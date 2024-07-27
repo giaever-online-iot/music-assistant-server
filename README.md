@@ -3,3 +3,5 @@ Music Assistant is a free, opensource Media library manager that connects to you
 
 # Package version
 This is the snap package of this software. At the moment it's considered to be bleeding edge. Please use with caution and report bugs. This project needs help. Maintainers (help) wanted.
+
+This project is not related to the official project, nor endorsed by it. 
