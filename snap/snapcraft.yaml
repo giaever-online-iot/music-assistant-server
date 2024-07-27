@@ -7,8 +7,13 @@ description: |
   streaming services and a wide range of connected speakers. The server is the beating 
   heart, the core of Music Assistant and must run on an always-on device like a 
   Raspberry Pi, a NAS or an Intel NUC or alike.
-grade: devel 
-confinement: devmode 
+grade: stable
+confinement: strict
+
+platforms:
+  amd64: {}
+  arm64: {}
+  armhf: {}
 
 apps:
   music-assistant:
