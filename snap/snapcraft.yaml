@@ -1,6 +1,6 @@
 name: music-assistant-server
 base: core24
-version: '2.0.4' 
+version: '2.1.0' 
 summary: Free and opensource Media library manager
 description: |
   Music Assistant is a free, opensource Media library manager that connects to your 
@@ -12,39 +12,50 @@ confinement: devmode
 
 apps:
   music-assistant:
-     command: ./bin/mass
+    command: ./bin/mass --config $SNAP_DATA --log-level debug
+    daemon: simple
+    restart-condition: always
+    environment:
+      PIP_USER: 1
+      PIP_ROOT_USER_ACTION: ignore
+    plugs:
+      - network
+      - network-bind
+    command-chain:
+      - bin/snapcraft-preload
+      - cmd-chain/env-wrapper
 
 package-repositories:
   - type: apt
     url: https://www.deb-multimedia.org
-    suites: [stable]
-    components: [main, non-free]
+    suites: [unstable]
+    components: [main]
     key-id: A401FF99368FA1F98152DE755C808C2B65558117
-  - type: apt
-    ppa: deadsnakes/ppa
-    priority: always
+    priority: defer
+  # - type: apt
+  #   ppa: deadsnakes/ppa
+  #   priority: always
 
 parts:
-  #snapcraft-preload:
-  #  source: https://github.com/sergiusens/snapcraft-preload.git
-  #  plugin: cmake
-  #  cmake-parameters:
-  #    - -DCMAKE_INSTALL_PREFIX=/
-  #  build-packages:
-  #    - on amd64:
-  #      - gcc-multilib
-  #      - g++-multilib
+  snapcraft-preload:
+   source: https://github.com/sergiusens/snapcraft-preload.git
+   plugin: cmake
+   cmake-parameters:
+     - -DCMAKE_INSTALL_PREFIX=/
+   build-packages:
+     - on amd64:
+       - gcc-multilib
+       - g++-multilib
         
   music-assistant:
-    #after: [libraop]
     plugin: python
     source: https://github.com/music-assistant/server.git
     source-tag: ${SNAPCRAFT_PROJECT_VERSION}
     python-requirements:  [requirements_all.txt]
-    build-environment:
-      - PARTS_PYTHON_INTERPRETER: "python3.12"
+    # build-environment:
+    #   - PARTS_PYTHON_INTERPRETER: "python3.12"
     python-packages:
-      - setuptools #<58
+      - setuptools
       - wheel
       - Cython
       - pip
@@ -55,42 +66,35 @@ parts:
       - cmake
       - cython3
       - pkg-config
-      - python3.12-dev
-      - python3.12-venv
+      # - python3.12-dev
+      - libglu1-mesa-dev
       - libsox-fmt-all
       - libsox3
+      - freeglut3-dev
       - sox
       - cifs-utils
       - libnfs-utils
     stage-packages:
       - deb-multimedia-keyring
-      - python3.12-venv
+      # - python3.12-venv
       - snapserver
+      - ffmpeg
+      - libglu1-mesa
+      - libglut3.12
+      - libopengl0
+      - libpulse0
     stage:
       - '*'
       - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-aarch64
       - -lib/python3.12/site-packages/music_assistant/server/providers/spotify/bin/librespot-linux-arm
+    # override-stage: |
+    #   craftctl default 
+    #   find "${CRAFT_STAGE}/bin" -type f -executable -exec sed -i 's/!\/usr\/bin\/env python3.12/!\/usr\/bin\/env python3/' {} \;
+    #   sed -i 's/include-system-site-packages = false/include-system-site-packages = true/g' "${CRAFT_STAGE}/pyvenv.cfg"
 
-    
-  #libraop:
-  #  plugin: dump
-  #  source: https://github.com/philippe44/libraop.git
-  #  build-packages:
-  #    - build-essential
-  #    - libssl-dev
-  #    - cmake
-        #- gcc-aarch64-linux-gnu 
-        #- binutils-aarch64-linux-gnu
-        #- gcc-arm-linux-gnueabti
-        #- binutils-arm-linux-gnueabi
-        #- gcc-powerpc-linux-gnu
-        #- binutils-powerpc-linux-gnu
-    # override-build: |
-    #  set -ex
-    #  echo "CMAKE"
-    #  cmake -DHOST="linux" -DPLATFORM="${CRAFT_ARCH_TRIPLET_BUILD_FOR}" \
-    #      --install-prefix "${CRAFT_PART_BUILD_WORK}" "${CRAFT_PART_SRC_WORK}" && \
-    #    echo "MAKE" && \
-    #    make -j "${CRAFT_PARALLEL_BUILD_COUNT}" "${CRAFT_PART_BUILD_WORK}"
-    #  echo "FINISH"
-    #  craftctl default
+  cmd:
+    plugin: dump
+    source: ./src
+    source-type: local
+    organize:
+      'env-wrapper': cmd-chain/env-wrapper
