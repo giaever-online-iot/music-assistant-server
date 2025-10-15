@@ -1,7 +1,7 @@
 name: music-assistant-server
 title: Music Assistant (server)
 base: core24
-version: '2.2.3' 
+version: '2.6.0' 
 license: Apache-2.0
 summary: Free and opensource Media library manager
 description: |
@@ -21,8 +21,8 @@ grade: stable
 confinement: strict
 
 platforms:
-  amd64: {}
-  arm64: {}
+  amd64:
+  arm64:
 
 apps:
   music-assistant:
