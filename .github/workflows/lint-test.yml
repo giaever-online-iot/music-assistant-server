@@ -1,0 +1,23 @@
+name: Lint
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/lint-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: shellcheck
+        # All snap-side scripts (currently just the env-wrapper command-chain
+        # script), at warning severity. -x follows sourced files.
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          shellcheck --severity=warning -x src/*
